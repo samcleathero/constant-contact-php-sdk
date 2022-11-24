@@ -2,14 +2,16 @@
 namespace Ctct;
 
 use Ctct\Services\AccountService;
-use Ctct\Services\ContactService;
-use Ctct\Services\LibraryService;
-use Ctct\Services\ListService;
-use Ctct\Services\EmailMarketingService;
+use Ctct\Services\ActivityService;
 use Ctct\Services\CampaignScheduleService;
 use Ctct\Services\CampaignTrackingService;
+use Ctct\Services\ContactService;
 use Ctct\Services\ContactTrackingService;
-use Ctct\Services\ActivityService;
+use Ctct\Services\EmailMarketingService;
+use Ctct\Services\LibraryService;
+use Ctct\Services\ListService;
+use GuzzleHttp\Client;
+use GuzzleHttp\ClientInterface;
 
 /**
  * Exposes all implemented Constant Contact API functionality
@@ -19,8 +21,7 @@ use Ctct\Services\ActivityService;
  * @author Constant Contact
  * @link https://developer.constantcontact.com
  */
-class ConstantContact
-{
+class ConstantContact {
     /**
      * Handles interaction with contact management
      * @var ContactService
@@ -79,17 +80,19 @@ class ConstantContact
      * Class constructor
      * Registers the API key with the ConstantContact class that will be used for all API calls.
      * @param string $apiKey - Constant Contact API Key
+     * @param ClientInterface|null $client - GuzzleHttp Client
      */
-    public function __construct($apiKey)
-    {
-        $this->contactService = new ContactService($apiKey);
-        $this->emailMarketingService = new EmailMarketingService($apiKey);
-        $this->activityService = new ActivityService($apiKey);
-        $this->campaignTrackingService = new CampaignTrackingService($apiKey);
-        $this->contactTrackingService = new ContactTrackingService($apiKey);
-        $this->campaignScheduleService = new CampaignScheduleService($apiKey);
-        $this->listService = new ListService($apiKey);
-        $this->accountService = new AccountService($apiKey);
-        $this->libraryService = new LibraryService($apiKey);
+    public function __construct($apiKey, ClientInterface $client = null) {
+        $client = $client ?: new Client();
+
+        $this->contactService = new ContactService($apiKey, $client);
+        $this->emailMarketingService = new EmailMarketingService($apiKey, $client);
+        $this->activityService = new ActivityService($apiKey, $client);
+        $this->campaignTrackingService = new CampaignTrackingService($apiKey, $client);
+        $this->contactTrackingService = new ContactTrackingService($apiKey, $client);
+        $this->campaignScheduleService = new CampaignScheduleService($apiKey, $client);
+        $this->listService = new ListService($apiKey, $client);
+        $this->accountService = new AccountService($apiKey, $client);
+        $this->libraryService = new LibraryService($apiKey, $client);
     }
 }
